@@ -1,0 +1,6 @@
+[app]
+name='imagedateadjuster'
+default_directory='data/foto' #can be a relative or absolute path
+allowed_time_deviation = 120 #value in seconds
+
+
