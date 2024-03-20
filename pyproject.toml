@@ -1,6 +1,14 @@
 [app]
 name='imagedateadjuster'
-default_directory='data/foto' #can be a relative or absolute path
 allowed_time_deviation = 120 #value in seconds
-
-
+additional_formats = [
+        "threema-%Y%m%d-%H%M%S%f.jpg",
+        "IMG-%Y%m%d-WA%f.jpg",
+        "%Y%m%d_%H%M%S.jpg",
+        "%Y%m%d_%H%M%S(%f).jpg",
+        "IMG_%Y%m%d_%H%M%S.jpg",
+        "VideoCapture_%Y%m%d-%H%M%S.jpg",
+        "image-%Y%d%m-%H%M%S.jpg",
+        "image-%Y%d%m-%H%M%S (%f).jpg",
+        # Add more formats as needed
+    ]
