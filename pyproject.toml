@@ -1,5 +1,4 @@
-[app]
-name='imagedateadjuster'
+[application]
 allowed_time_deviation = 120 #value in seconds
 additional_formats = [
         "threema-%Y%m%d-%H%M%S%f.jpg",

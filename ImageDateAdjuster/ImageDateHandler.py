@@ -4,11 +4,22 @@ import os
 from time import time
 from datetime import datetime
 import logging
-
 import dateutil.parser as parser
 from exiftool import ExifToolHelper
 
-APP_CONFIG = toml.load("pyproject.toml")["app"]
+
+def load_config():
+    try:
+        return toml.load("pyproject.toml")["application"]
+    except (FileNotFoundError, KeyError) as e:
+        logging.warning(f"Failed to load configuration: {e}")
+        return {
+            "allowed_time_deviation": 5,
+            "additional_formats": [],
+        }  # Provide default config values
+
+
+APP_CONFIG = load_config()
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -51,7 +62,7 @@ def get_all_subdirectories(dirname: str, visited: set[str] = None) -> list[str]:
 class ImageDateHandler:
     def __init__(
         self,
-        dirname: os.path,
+        dirname: str,
         dryrun: bool = True,
         max_timedeviation_sec: int = 60,
         filetypes: tuple[str, ...] = ("jpg"),
@@ -192,7 +203,7 @@ def app():
         directorypath = os.path.normpath(directory)
         ida = ImageDateHandler(
             dirname=directorypath,
-            dryrun=False,
+            dryrun=True,
             max_timedeviation_sec=180,
             filetypes=("jpg", "png"),
             additional_formats=APP_CONFIG["additional_formats"],
