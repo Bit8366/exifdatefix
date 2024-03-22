@@ -9,7 +9,7 @@
 * [x] Error Handling: TryExcept, ask for prompt, log, etc. (make file write protected to check)
 * [x] Silent and Manual mode 
 * [ ] command line arguments
-* [ ] cleanup naming
+* [ ] cleanup naming (EXIFDateCorrector)
 * [ ] add description and manual to readme
 
 
