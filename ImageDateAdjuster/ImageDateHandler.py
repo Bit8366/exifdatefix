@@ -8,27 +8,37 @@ import dateutil.parser as parser
 from exiftool import ExifToolHelper
 
 
+def setup_logging():
+    log_directory = "logs"
+    os.makedirs(log_directory, exist_ok=True)
+    log_filename = f"logfile_{datetime.now().strftime('%y%m%d')}.log"
+    log_filepath = os.path.join(log_directory, log_filename)
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+
+    handler = logging.FileHandler(log_filepath)
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger
+
+
 def load_config():
     try:
         return toml.load("pyproject.toml")["application"]
     except (FileNotFoundError, KeyError) as e:
-        logging.warning(f"Failed to load configuration: {e}")
+        logger.warning(f"Failed to load configuration: {e}")
         return {
             "allowed_time_deviation": 5,
             "additional_formats": [],
         }  # Provide default config values
 
 
+logger = setup_logging()
 APP_CONFIG = load_config()
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.FileHandler(
-    "logs/logfile_" + datetime.now().strftime("%y%m%d") + ".log"
-)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 
 def timer(func):
@@ -198,24 +208,20 @@ def app():
     subdirectories = get_all_subdirectories("data/test")
     logfilename = datetime.now().strftime("%y%m%d_%H%M%S_") + "logfile"
     changes = {}
-    for directory in subdirectories:
-        print("-*-*-*-*-")
+    max_subdirectories = len(subdirectories)
+    for item, directory in enumerate(subdirectories, start=1):
+        print(f"Directory {item} of {max_subdirectories}")
         directorypath = os.path.normpath(directory)
         ida = ImageDateHandler(
             dirname=directorypath,
             dryrun=True,
-            max_timedeviation_sec=180,
+            max_timedeviation_sec=APP_CONFIG["allowed_time_deviation"],
             filetypes=("jpg", "png"),
             additional_formats=APP_CONFIG["additional_formats"],
         )
         ida.compare_dates()
         result = ida.update_exif_dates()
         changes.update(result)
-
-        if False:
-            print(ida.get_image_files())
-            print(ida.get_filename_dates())
-            print(ida.get_exif_dates())
 
     with open("logs/" + logfilename + ".json", "w") as outfile:
         json.dump(changes, outfile, indent=4)
