@@ -160,12 +160,9 @@ class ImageDateHandler:
                     }
                     try:
                         if self.dryrun:
-                            print("dryrun")
                             pass
                         else:
-                            print("hotrun")
-                            # et.execute(*command)
-                            pass
+                            et.execute(*command)
                     except Exception as e:
                         logger.error(f"Error ExifToolHelper: {e}")
 
