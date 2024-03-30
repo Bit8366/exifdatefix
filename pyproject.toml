@@ -1,7 +1,12 @@
 [project]
 name = "filename2exifdate"
 version = "0.0.1"
-description = "asdf"
+description = "filename2exifdate is a Python package that automates the synchronization of image creation dates in filenames with their EXIF metadata, and offers a CLI for recursive processing."
+authors = [
+  { name="Stefan Bader", email="bit8366@gmx.net" },
+]
+readme = "README.md"
+requires-python = ">=3.8"
 dependencies = [
     "PyExifTool",
     "python-dateutil",
@@ -19,4 +24,4 @@ where = ["src"]
 fn2exif = "filename2exifdate.filename2exifdate:cli"
 
 [project.urls]
-Homepage = "https://github.com/pypa/sampleproject"
+Homepage = "https://github.com/Bit8366/filename2exifdate"
