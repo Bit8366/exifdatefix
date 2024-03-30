@@ -1,7 +1,6 @@
 {
-    // https://dev.to/facepalm/how-to-set-formatting-and-linting-on-vscode-for-python-using-black-formatter-and-flake8-extensions-322o
     "editor.defaultFormatter": "ms-python.black-formatter",
-    "editor.formatOnSave": true, // new
+    "editor.formatOnSave": true,
     "black-formatter.args": [
         "--line-length", "88",
     ],
@@ -13,9 +12,9 @@
 
     "[python]": {
         "editor.codeActionsOnSave": {
-          "source.organizeImports": "explicit"
+          "source.organizeImports": true
         },
-        "editor.formatOnSave": true, // new
+        "editor.formatOnSave": true,
        },
  }
  
