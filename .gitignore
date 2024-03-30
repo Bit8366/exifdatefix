@@ -1,6 +1,10 @@
 venv
 .env
-data/*
+
+tests/samples/*
 .logs
 
 __pycache__
+
+dist
+*.egg-info

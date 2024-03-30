@@ -1,0 +1,22 @@
+[project]
+name = "filename2exifdate"
+version = "0.0.1"
+description = "asdf"
+dependencies = [
+    "PyExifTool",
+    "python-dateutil",
+    "six",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+fn2exif = "filename2exifdate.filename2exifdate:cli"
+
+[project.urls]
+Homepage = "https://github.com/pypa/sampleproject"
