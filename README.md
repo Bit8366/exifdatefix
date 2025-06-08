@@ -1,12 +1,18 @@
-# Filename2EXIFDate
-* execute the tool from cli
-  ```python -m filename2exifdate.filename2exifdate -dir ../tests/samples```
+# exifdatefix
+
+## Using Tool
+* Execute CLI, in dry-mode to check with the logs what the force mode would change
+  ```python -m exifdatefix.cli -dir ~/Bilder/```
+  
+* Execute CLI, in force-mode applies changes
+  ```python -m exifdatefix.cli -f -dir ~/Bilder/```
   
 ## ToDos
-* [ ] Cleanup Repo and Readme
-* [ ] Renaming of package
-* [ ] Check that CLI works
-* [ ] Add Progressbar (tqdm)
+* [x] Cleanup Repo and Readme
+* [x] Renaming of package
+* [x] Check that CLI works
+* [ ] add CLI to chang log-directory ```parser.add_argument("--log-dir", default=LOG_DIRECTORY, help="Path to log file")```
+* [x] Add Progressbar (tqdm)
 * [ ] Multithreading of recursive task
 * [ ] add Testcases (add some images to test the code)
 * [ ] package optional
