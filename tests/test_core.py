@@ -1,8 +1,5 @@
 import os
-import tempfile
-import shutil
 from datetime import datetime
-import pytest
 from exifdatefix.core import ImageDateHandler
 
 SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "samples")
