@@ -59,11 +59,11 @@ class ImageDateHandler:
         return self.exif_dates
 
     def extract_image_files(self):
-        self.image_files = list(
-            filter(
-                lambda x: x.lower().endswith(self.file_types), os.listdir(self.dirname)
-            )
-        )
+        self.image_files = [
+            entry.name
+            for entry in os.scandir(self.dirname)
+            if entry.is_file() and entry.name.lower().endswith(self.file_types)
+        ]
         logger.info(f"{len(self.image_files)} image files {self.file_types} found!")
         logger.debug(f"Filenames: {self.image_files}")
 
@@ -128,12 +128,12 @@ class ImageDateHandler:
             ):
                 if has_delta:
                     new_create_date = creation_date.strftime("%Y:%m:%d %H:%M:%S")
-                    command = {
+                    command = [
                         "-DateTimeOriginal=" + new_create_date,
                         "-CreateDate=" + new_create_date,
                         "-overwrite_original",
                         file_path,
-                    }
+                    ]
                     try:
                         if self.force:
                             et.execute(*command)
