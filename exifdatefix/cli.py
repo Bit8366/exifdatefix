@@ -3,7 +3,7 @@ import json
 import os
 import argparse
 from datetime import datetime
-from .imagedatehandler import ImageDateHandler
+from .core import ImageDateHandler
 
 LOG_DIRECTORY = ".logs"
 
