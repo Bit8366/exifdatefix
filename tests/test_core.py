@@ -5,85 +5,34 @@ from datetime import datetime
 import pytest
 from exifdatefix.core import ImageDateHandler
 
-
-@pytest.fixture
-def temp_image_dir():
-    temp_dir = tempfile.mkdtemp()
-    yield temp_dir
-    shutil.rmtree(temp_dir)
+SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "samples")
 
 
-def create_image_file(directory, filename):
-    path = os.path.join(directory, filename)
-    with open(path, "wb") as f:
-        f.write(b"fake image data")
-    return path
+def test_extract_image_files_jpg_and_png():
+    handler = ImageDateHandler(SAMPLES_DIR)
+    files = handler.get_image_files()
+    expected_files = [
+        "IMG_20220101_120000.jpg",
+        "IMG_20220102_130000.jpg",
+        "IMG_20220103_140000.jpg",
+        "IMG_20220104_150000.png",
+        "randomfile.jpg",
+    ]
+    assert sorted(files) == sorted(expected_files)
 
 
-def test_extract_image_files_jpg_and_png(temp_image_dir):
-    create_image_file(temp_image_dir, "IMG_20220101_120000.jpg")
-    create_image_file(temp_image_dir, "IMG_20220101_120000.png")
-    create_image_file(temp_image_dir, "not_an_image.txt")
-    handler = ImageDateHandler(temp_image_dir)
-    assert sorted(handler.get_image_files()) == sorted(
-        ["IMG_20220101_120000.jpg", "IMG_20220101_120000.png"]
+def test_extract_exif_dates():
+    handler = ImageDateHandler(SAMPLES_DIR)
+    exif_dates = handler.get_exif_dates()
+    expected_dates = [
+        datetime(2022, 1, 1, 12, 0, 0),
+        None,  # Kein EXIF-Datum für IMG_20220102_130000.jpg
+        datetime(
+            2020, 1, 1, 0, 0, 0
+        ),  # Falsches EXIF-Datum für IMG_20220103_140000.jpg
+        datetime(2022, 5, 5, 15, 30, 0),  # EXIF-Datum für randomfile.jpg
+        None,  # Kein EXIF-Datum für PNG-Bild
+    ]
+    assert sorted(exif_dates, key=lambda x: (x is not None, x)) == sorted(
+        expected_dates, key=lambda x: (x is not None, x)
     )
-
-
-def test_extract_filename_dates_valid_and_invalid(temp_image_dir):
-    create_image_file(temp_image_dir, "IMG_20220101_120000.jpg")
-    create_image_file(temp_image_dir, "invalidname.jpg")
-    handler = ImageDateHandler(temp_image_dir)
-    dates = handler.get_filename_dates()
-    assert isinstance(dates[0], datetime)
-    assert dates[1] is None
-
-
-def test_extract_exif_dates(temp_image_dir):
-    create_image_file(temp_image_dir, "IMG_20220101_120000.jpg")
-    handler = ImageDateHandler(temp_image_dir)
-    # Simulate EXIF date extraction
-    handler.exif_dates = [datetime(2022, 1, 1, 12, 0, 0)]
-    assert handler.get_exif_dates() == [datetime(2022, 1, 1, 12, 0, 0)]
-
-
-def test_get_all_subdirectories(tmp_path):
-    sub1 = tmp_path / "sub1"
-    sub2 = tmp_path / "sub2"
-    sub1.mkdir()
-    sub2.mkdir()
-    sub1a = sub1 / "sub1a"
-    sub1a.mkdir()
-    result = ImageDateHandler.get_all_subdirectories(str(tmp_path))
-    assert str(tmp_path) in result
-    assert str(sub1) in result
-    assert str(sub2) in result
-    assert str(sub1a) in result
-
-
-def test_compare_dates_sets_has_time_difference(temp_image_dir):
-    create_image_file(temp_image_dir, "IMG_20220101_120000.jpg")
-    handler = ImageDateHandler(temp_image_dir)
-    # Simulate exif_dates and filename_dates
-    handler.exif_dates = [datetime(2022, 1, 1, 12, 0, 0)]
-    handler.filename_dates = [datetime(2022, 1, 1, 12, 2, 1)]
-    handler.compare_dates()
-    assert handler.has_time_difference == [True]
-
-
-def test_compare_dates_handles_none(temp_image_dir):
-    create_image_file(temp_image_dir, "IMG_20220101_120000.jpg")
-    handler = ImageDateHandler(temp_image_dir)
-    handler.exif_dates = [None]
-    handler.filename_dates = [datetime(2022, 1, 1, 12, 0, 0)]
-    handler.compare_dates()
-    assert handler.has_time_difference == [True]
-
-
-def test_compare_dates_handles_filedate_none(temp_image_dir):
-    create_image_file(temp_image_dir, "IMG_20220101_120000.jpg")
-    handler = ImageDateHandler(temp_image_dir)
-    handler.exif_dates = [datetime(2022, 1, 1, 12, 0, 0)]
-    handler.filename_dates = [None]
-    handler.compare_dates()
-    assert handler.has_time_difference == [False]

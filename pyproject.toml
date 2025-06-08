@@ -18,3 +18,4 @@ fn2exif = "exifdatefix.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/Bit8366/exifdatefix"
+Issues = "https://github.com/Bit8366/exifdatefix/issues"
