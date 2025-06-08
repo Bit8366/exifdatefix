@@ -1,23 +1,20 @@
 # Filename2EXIFDate
-* here some content
-
+* execute the tool from cli
+  ```python -m filename2exifdate.filename2exifdate -dir ../tests/samples```
+  
 ## ToDos
-* [x] logging https://www.machinelearningplus.com/python/python-logging-guide/
-* [x] exceptio file formats to config!
-* [x] toml file basics https://toml.io/en/
-* [x] Threema Dateformat Problem (e.g. config file?? for unknown formats)
-* [x] Error Handling: TryExcept, ask for prompt, log, etc. (make file write protected to check)
-* [x] Silent and Manual mode 
-* [x] command line arguments https://www.geeksforgeeks.org/§command-line-scripts-python-packaging/?ref=header_search
-* [x] cleanup naming (EXIFDateCorrector)
-* [x] define log directory default /var/logs/filename2exif... and windows %APPDATA%/filename2.. ....
-* [ ] make setup.py etc and pypi conform repo https://packaging.python.org/en/latest/tutorials/packaging-projects/, https://pybit.es/articles/how-to-package-and-deploy-cli-apps/, https://setuptools.pypa.io/en/latest/userguide/entry_point.html
-* [ ] add description and manual to readme
-* [ ] test in linux and windows
-* [ ] test images in repo data
-* [ ] testcases implementation
-* [ ] additional formats better place
-* [ ] log directory as cli parameter
+* [ ] Cleanup Repo and Readme
+* [ ] Renaming of package
+* [ ] Check that CLI works
+* [ ] Add Progressbar (tqdm)
+* [ ] Multithreading of recursive task
+* [ ] add Testcases (add some images to test the code)
+* [ ] package optional
+
+## Links used
+* logging: https://www.machinelearningplus.com/python/python-logging-guide/
+* cli: https://www.geeksforgeeks.org/§command-line-scripts-python-packaging/?ref=header_search
+* package pypi: pypi conform repo https://packaging.python.org/en/latest/tutorials/packaging-projects/, https://pybit.es/articles/how-to-package-and-deploy-cli-apps/, https://setuptools.pypa.io/en/latest/userguide/entry_point.html
 
 ## Logs
 * Windows ...
