@@ -1,10 +1,5 @@
+__pycache__
 venv
-.env
 
 tests/samples/*
-.logs
 
-__pycache__
-
-dist
-*.egg-info
