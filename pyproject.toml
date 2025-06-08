@@ -1,7 +1,7 @@
 [project]
 name = "exifdatefix"
-version = "0.0.1"
-description = "exifdatefix is a Python package that automates the synchronization of image creation dates in filenames with their EXIF metadata, and offers a CLI for recursive processing."
+version = "0.1.0"
+description = "`exifdatefix` is a Python package that automates the synchronization of image creation dates in filenames with their EXIF metadata, and offers a CLI for recursive processing."
 authors = [
   { name="Stefan Bader", email="bit8366@gmx.net" },
 ]
@@ -10,18 +10,11 @@ requires-python = ">=3.8"
 dependencies = [
     "PyExifTool",
     "python-dateutil",
-    "six",
 ]
-
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-where = ["src"]
+license = { text = "MIT" }
 
 [project.scripts]
-fn2exif = "exifdatefix.cli:cli"
+fn2exif = "exifdatefix.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/Bit8366/exifdatefix"
