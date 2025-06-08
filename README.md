@@ -27,7 +27,8 @@
 * [x] Add Progressbar (tqdm)
 * [ ] Multithreading of recursive task
 * [x] add Testcases (add some images to test the code)
-* [x] package optional
+* [ ] package to pypi
+* [ ] make better testcases
 
 ## Helpful Links
 * logging: https://www.machinelearningplus.com/python/python-logging-guide/
