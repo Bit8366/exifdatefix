@@ -2,7 +2,8 @@ import os
 from datetime import datetime
 import logging
 import dateutil.parser as parser
-from exiftool import ExifToolHelper
+from PIL import Image
+import piexif
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -89,20 +90,25 @@ class ImageDateHandler:
         logger.debug(f"Filenamedates: {self.filename_dates}")
 
     def extract_exif_dates(self):
-        if self.filepaths:
-            with ExifToolHelper() as et:
-                taglist = et.get_tags(self.filepaths, tags=["CreateDate"])
-
-            for element in taglist:
-                datestring = element.get("EXIF:CreateDate")
-                if datestring is not None:
+        self.exif_dates = []
+        for filepath in self.filepaths:
+            createdate = None
+            try:
+                img = Image.open(filepath)
+                exif_data = img.info.get("exif")
+                if exif_data:
+                    exif_dict = piexif.load(exif_data)
+                    date_bytes = exif_dict["Exif"].get(piexif.ExifIFD.DateTimeOriginal)
+                    datestring = date_bytes.decode("utf-8")
+                    # EXIF date format: "YYYY:MM:DD HH:MM:SS"
                     createdate = datetime.strptime(datestring, "%Y:%m:%d %H:%M:%S")
-                else:
-                    createdate = None
+            except Exception as e:
+                logger.info(f"Couldn't read EXIF from {filepath}: {e}")
+                createdate = None
 
-                self.exif_dates.append(createdate)
+            self.exif_dates.append(createdate)
 
-            logger.debug(f"Exifdates: {self.exif_dates}")
+        logger.debug(f"Exifdates: {self.exif_dates}")
 
     def compare_dates(self):
         for exifdate, filedate in zip(self.exif_dates, self.filename_dates):
@@ -119,38 +125,40 @@ class ImageDateHandler:
 
     def update_exif_dates(self):
         changes = {}
-        with ExifToolHelper() as et:
-            for file_path, creation_date, exifdate, has_delta in zip(
-                self.filepaths,
-                self.filename_dates,
-                self.exif_dates,
-                self.has_time_difference,
-            ):
-                if has_delta:
-                    new_create_date = creation_date.strftime("%Y:%m:%d %H:%M:%S")
-                    command = [
-                        "-DateTimeOriginal=" + new_create_date,
-                        "-CreateDate=" + new_create_date,
-                        "-overwrite_original",
-                        file_path,
-                    ]
-                    try:
-                        if self.force:
-                            et.execute(*command)
-                        else:
-                            pass
-                    except Exception as e:
-                        logger.error(f"Error ExifToolHelper: {e}")
 
-                    logger.info(
-                        f"File: {file_path}, changed 'CreationDate'"
-                        f"to: {new_create_date}"
-                    )
+        for file_path, creation_date, exifdate, has_delta in zip(
+            self.filepaths,
+            self.filename_dates,
+            self.exif_dates,
+            self.has_time_difference,
+        ):
+            if has_delta:
+                new_create_date = creation_date.strftime("%Y:%m:%d %H:%M:%S")
+                try:
+                    if self.force:
+                        img = Image.open(file_path)
+                        exif_dict = piexif.load(img.info.get("exif", b""))
+                        new_date_bytes = new_create_date.encode("utf-8")
+                        exif_dict["Exif"][
+                            piexif.ExifIFD.DateTimeOriginal
+                        ] = new_date_bytes
+                        exif_dict["Exif"][piexif.ExifIFD.CreateDate] = new_date_bytes
+                        exif_bytes = piexif.dump(exif_dict)
+                        img.save(file_path, exif=exif_bytes)
+                    else:
+                        pass
+                except Exception as e:
+                    logger.error(f"Error updating EXIF with Pillow/piexif: {e}")
 
-                    changes[file_path] = {
-                        "new_creation_date": str(creation_date),
-                        "old_creation_date": str(exifdate),
-                    }
+                logger.info(
+                    f"File: {file_path}, changed 'CreationDate'"
+                    f"to: {new_create_date}"
+                )
+
+                changes[file_path] = {
+                    "new_creation_date": str(creation_date),
+                    "old_creation_date": str(exifdate),
+                }
         return changes
 
     def _update_filepaths(self):
