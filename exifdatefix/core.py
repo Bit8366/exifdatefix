@@ -137,12 +137,21 @@ class ImageDateHandler:
                 try:
                     if self.force:
                         img = Image.open(file_path)
-                        exif_dict = piexif.load(img.info.get("exif", b""))
+                        exif_data = img.info.get("exif")
+                        if exif_data:
+                            exif_dict = piexif.load(exif_data)
+                        else:
+                            exif_dict = {
+                                "0th": {},
+                                "Exif": {},
+                                "GPS": {},
+                                "1st": {},
+                                "thumbnail": None,
+                            }
                         new_date_bytes = new_create_date.encode("utf-8")
                         exif_dict["Exif"][
                             piexif.ExifIFD.DateTimeOriginal
                         ] = new_date_bytes
-                        exif_dict["Exif"][piexif.ExifIFD.CreateDate] = new_date_bytes
                         exif_bytes = piexif.dump(exif_dict)
                         img.save(file_path, exif=exif_bytes)
                     else:
