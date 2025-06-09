@@ -7,17 +7,17 @@
 * Execute CLI, in force-mode applies changes
   ```python -m exifdatefix.cli -f -dir ~/Bilder/```
   
-## Build
+## Development
+### Build
 1. create a virtual environment: ```python -m venv venv```
 2. activate the virtual environment: ```source ./venv/bin/activate```
-3. install the development dependencies: ```pip install -m requirements.txt```
+3. install the development dependencies: ```pip install -m requirements-dev.txt```
 4. build the package: ```python -m build```
 5. install package in editable mode: ```pip install -e .```
 
-## Test
-1. install pytest: ```pip install pytest```
+### Test
 1. open project folder in bash: ```cd exifdatefix```
-1. run: ```pytest -v```
+2. run: ```pytest -v```
    
 ## Todo
 * [x] Cleanup Repo and Readme
