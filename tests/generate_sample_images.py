@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-import subprocess
+from exiftool import ExifToolHelper
 
 SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "samples")
 os.makedirs(SAMPLES_DIR, exist_ok=True)
@@ -12,17 +12,13 @@ def create_image(path, color=(255, 0, 0)):
 
 
 def set_exif_date(path, date_str):
-    # Set EXIF CreateDate using exiftool
-    subprocess.run(
-        [
-            "exiftool",
-            f"-CreateDate={date_str}",
-            f"-DateTimeOriginal={date_str}",
-            "-overwrite_original",
-            path,
-        ],
-        check=True,
-    )
+    with ExifToolHelper() as et:
+        et.execute(
+            b"-CreateDate=" + date_str.encode(),
+            b"-DateTimeOriginal=" + date_str.encode(),
+            b"-overwrite_original",
+            path.encode(),
+        )
 
 
 # 1. Bild mit passendem Dateinamen und EXIF-Datum
