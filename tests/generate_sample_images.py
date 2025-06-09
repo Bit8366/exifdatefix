@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-from exiftool import ExifToolHelper
+import piexif
 
 SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "samples")
 os.makedirs(SAMPLES_DIR, exist_ok=True)
@@ -12,13 +12,12 @@ def create_image(path, color=(255, 0, 0)):
 
 
 def set_exif_date(path, date_str):
-    with ExifToolHelper() as et:
-        et.execute(
-            b"-CreateDate=" + date_str.encode(),
-            b"-DateTimeOriginal=" + date_str.encode(),
-            b"-overwrite_original",
-            path.encode(),
-        )
+    exif_dict = {"0th": {}, "Exif": {}, "GPS": {}, "1st": {}, "thumbnail": None}
+    exif_dict["Exif"][piexif.ExifIFD.DateTimeOriginal] = date_str
+    exif_dict["Exif"][piexif.ExifIFD.DateTimeDigitized] = date_str
+    exif_bytes = piexif.dump(exif_dict)
+    img = Image.open(path)
+    img.save(path, exif=exif_bytes)
 
 
 # 1. Bild mit passendem Dateinamen und EXIF-Datum
